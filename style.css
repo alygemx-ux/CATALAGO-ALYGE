@@ -2,7 +2,7 @@
    GENERAL
 ======================= */
 body {
-  font-family: 'Poppins', Arial, sans-serif;
+  font-family: 'Montserrat', Arial, sans-serif;
   margin: 0;
   padding: 0;
   background: #FAF7F2; /* Fondo neutro */
@@ -46,3 +46,112 @@ header {
 
 .categoria {
   display: inline-block;
+  margin: 5px;
+  padding: 8px 16px;
+  background: #D9C6B0; /* Beige principal */
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 600; /* Montserrat semi-bold */
+  transition: background 0.3s, transform 0.2s;
+}
+
+.categoria:hover {
+  background: #BFA68A; /* Beige oscuro para hover */
+  transform: scale(1.05);
+}
+
+.categoria:active {
+  transform: scale(0.97);
+}
+
+/* =======================
+   PRODUCTOS
+======================= */
+#productos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 15px;
+  padding: 1rem;
+}
+
+.card {
+  background: white;
+  border-radius: 8px;
+  padding: 1rem;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.18);
+}
+
+/* =======================
+   IMÁGENES
+======================= */
+.img-container {
+  position: relative;
+  width: 100%;
+  height: 220px;
+  overflow: hidden;
+  border-radius: 6px;
+}
+
+.img-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  position: absolute;
+  top: 0;
+  left: 0;
+  transition: opacity 0.6s ease;
+}
+
+.img-container .img2 {
+  opacity: 0;
+}
+
+.img-container:hover .img1 {
+  opacity: 0;
+}
+
+.img-container:hover .img2 {
+  opacity: 1;
+}
+
+/* =======================
+   BOTONES
+======================= */
+button {
+  background: #D9C6B0; /* Beige principal */
+  color: white;
+  border: none;
+  padding: 8px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 8px;
+  font-weight: 600; /* Montserrat semi-bold */
+  transition: background 0.3s, transform 0.1s;
+}
+
+button:hover {
+  background: #BFA68A; /* Beige oscuro para hover */
+}
+
+button:active {
+  transform: scale(0.97);
+}
+
+/* =======================
+   FOOTER
+======================= */
+footer {
+  text-align: center;
+  padding: 1rem;
+  background: #2C2C2C; /* Contraste profesional */
+  color: #FAF7F2;
+  margin-top: 20px;
+}

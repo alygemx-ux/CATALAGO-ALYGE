@@ -1,92 +1,66 @@
-// script.js (versión robusta y con búsqueda que funciona aunque las columnas tengan espacios/mayúsculas)
 const API_URL = "https://script.google.com/macros/s/AKfycbwScqdIrqYxmcZMLcw5CyulNxeMCV90gPfqdhJqNnj9udL8il10H20SyLbWcgysPYJR/exec";
 const NUMERO_WHATSAPP = "5213318192003";
 
 let productos = [];
 let categorias = [];
 
-/**
- * Normaliza un objeto · quita espacios en claves y crea claves esperadas
- * Devuelve objeto con al menos: Nombre, Descripción, Precio, Imagen_URL, Categoría
- */
+// Normalizar datos
 function normalizeItem(raw) {
   const norm = {};
   Object.keys(raw).forEach(k => {
-    const key = String(k).trim();               // header original
-    const val = raw[k];
-    norm[key] = val;
+    const key = String(k).trim();
+    norm[key] = raw[k];
   });
-
-  // Asegurar claves comunes con fallback
-  const nombre = norm["Nombre"] ?? norm["nombre"] ?? norm["Name"] ?? norm["name"] ?? "";
-  const descripcion = norm["Descripción"] ?? norm["Descripcion"] ?? norm["descripcion"] ?? norm["Description"] ?? norm["description"] ?? "";
-  const precio = (norm["Precio"] ?? norm["precio"] ?? norm["Price"] ?? norm["price"] ?? "") ;
-  const imagen = norm["Imagen_URL"] ?? norm["Imagen"] ?? norm["Image"] ?? norm["image"] ?? "";
-  const categoria = norm["Categoría"] ?? norm["Categoria"] ?? norm["categoria"] ?? norm["Category"] ?? norm["category"] ?? "Sin categoría";
 
   return {
     ...norm,
-    Nombre: String(nombre),
-    Descripción: String(descripcion),
-    Precio: String(precio),
-    Imagen_URL: String(imagen),
-    Categoría: String(categoria)
+    Nombre: norm["Nombre"] ?? "",
+    Descripción: norm["Descripción"] ?? "",
+    Precio: norm["Precio"] ?? "",
+    Imagen_URL: norm["Imagen_URL"] ?? "",
+    Imagen_URL_2: norm["Imagen_URL_2"] ?? "",
+    Categoría: norm["Categoría"] ?? "Sin categoría"
   };
 }
 
-/** carga inicial */
 async function init() {
   try {
     const res = await fetch(API_URL);
     const data = await res.json();
-
-    // data puede ser array de objetos o un wrapper; manejamos ambos
-    let rawList = [];
-    if (Array.isArray(data)) rawList = data;
-    else if (data.productos && Array.isArray(data.productos)) rawList = data.productos;
-    else if (data.length) rawList = data;
-    else rawList = [];
-
+    let rawList = Array.isArray(data) ? data : (data.productos || []);
     productos = rawList.map(item => normalizeItem(item));
     mostrarCategorias();
     mostrarProductos(productos);
   } catch (err) {
     console.error("Error al cargar productos:", err);
-    document.getElementById("productos").innerHTML = "<p style='text-align:center;color:#666;padding:20px;'>Error al cargar los productos. Revisa la consola.</p>";
+    document.getElementById("productos").innerHTML = "<p style='text-align:center;color:#666;padding:20px;'>Error al cargar los productos.</p>";
   }
 }
 
-/** muestra categorías detectadas */
 function mostrarCategorias() {
   const cont = document.getElementById("categorias");
-  categorias = Array.from(new Set(productos.map(p => p.Categoría || "Sin categoría")));
-  if (!cont) return;
-  if (categorias.length === 0) {
-    cont.innerHTML = "";
-    return;
-  }
-  cont.innerHTML = `<span class="categoria" onclick="mostrarTodos()">Todos</span>` + categorias
-    .map(c => `<span class="categoria" onclick="filtrar('${escapeHtml(c)}')">${escapeHtml(c)}</span>`)
-    .join('');
+  categorias = Array.from(new Set(productos.map(p => p.Categoría)));
+  cont.innerHTML = `<span class="categoria" onclick="mostrarTodos()">Todos</span>` +
+    categorias.map(c => `<span class="categoria" onclick="filtrar('${escapeHtml(c)}')">${escapeHtml(c)}</span>`).join('');
 }
 
-/** muestra todos */
 function mostrarTodos() {
   mostrarProductos(productos);
 }
 
-/** render productos en grid */
 function mostrarProductos(lista) {
   const cont = document.getElementById("productos");
-  if (!cont) return;
-  if (!Array.isArray(lista) || lista.length === 0) {
+  if (!lista || lista.length === 0) {
     cont.innerHTML = `<p style="text-align:center;color:#666;padding:30px;">No se encontraron productos.</p>`;
     return;
   }
 
   cont.innerHTML = lista.map(p => `
     <div class="card">
-      <img src="${sanitizeUrl(p.Imagen_URL)}" alt="${escapeHtml(p.Nombre)}" onerror="this.src='https://via.placeholder.com/400x300?text=Sin+imagen'"/>
+      <div class="img-container">
+        <img class="img1" src="${sanitizeUrl(p.Imagen_URL)}" alt="${escapeHtml(p.Nombre)}" onerror="this.src='https://via.placeholder.com/400x300?text=Sin+imagen'"/>
+        ${p.Imagen_URL_2 ? `<img class="img2" src="${sanitizeUrl(p.Imagen_URL_2)}" alt="${escapeHtml(p.Nombre)}" onerror="this.style.display='none'"/>` : ""}
+      </div>
       <h3>${escapeHtml(p.Nombre)}</h3>
       <p>${escapeHtml(p.Descripción)}</p>
       <strong>$${escapeHtml(p.Precio)}</strong>
@@ -96,58 +70,43 @@ function mostrarProductos(lista) {
   `).join('');
 }
 
-/** filtrar por categoría */
 function filtrar(cat) {
-  const filtrados = productos.filter(p => String(p.Categoría) === String(cat));
+  const filtrados = productos.filter(p => p.Categoría === cat);
   mostrarProductos(filtrados);
 }
 
-/** buscar por nombre y descripción (case-insensitive) */
 function buscar(term) {
   if (!term) return mostrarProductos(productos);
   const q = term.trim().toLowerCase();
-  const filtrados = productos.filter(p => {
-    const n = (p.Nombre || "").toString().toLowerCase();
-    const d = (p.Descripción || "").toString().toLowerCase();
-    return n.includes(q) || d.includes(q);
-  });
+  const filtrados = productos.filter(p =>
+    (p.Nombre || "").toLowerCase().includes(q) ||
+    (p.Descripción || "").toLowerCase().includes(q)
+  );
   mostrarProductos(filtrados);
 }
 
-/** abrir WhatsApp con mensaje completo */
 function consultar(nombreEncoded) {
   const nombre = decodeURIComponent(nombreEncoded);
   const mensaje = `Hola, quiero consultar la disponibilidad del artículo: ${nombre}`;
-  const url = `https://wa.me/${NUMERO_WHATSAPP}?text=${encodeURIComponent(mensaje)}`;
-  window.open(url, "_blank");
+  window.open(`https://wa.me/${NUMERO_WHATSAPP}?text=${encodeURIComponent(mensaje)}`, "_blank");
 }
 
-/** util: proteger texto en HTML */
 function escapeHtml(str) {
-  if (str === undefined || str === null) return "";
-  return String(str)
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
+  return String(str || "")
+    .replace(/&/g, "&amp;").replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;").replace(/"/g, "&quot;")
     .replace(/'/g, "&#039;");
 }
 
-/** util: asegurar urls (evitar mapas de datos extraños) */
-function sanitizeUrl(u){
-  if(!u) return "";
+function sanitizeUrl(u) {
+  if (!u) return "";
   const s = String(u).trim();
-  // si no empieza con http, devolver vacío (asume que no hay imagen pública)
-  if(!/^https?:\/\//i.test(s)) return s; 
+  if (!/^https?:\/\//i.test(s)) return "";
   return s;
 }
 
-/** listener del buscador (asegurar que exista DOM) */
 document.addEventListener("DOMContentLoaded", () => {
   const buscador = document.getElementById("buscador");
-  if (buscador) {
-    buscador.addEventListener("input", e => buscar(e.target.value));
-  }
-  // iniciar carga
+  if (buscador) buscador.addEventListener("input", e => buscar(e.target.value));
   init();
 });

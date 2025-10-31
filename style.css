@@ -2,12 +2,13 @@ body {
   font-family: 'Poppins', Arial, sans-serif;
   margin: 0;
   padding: 0;
-  background: #f4f4f4;
+  background: #FAF7F2;
+  color: #2C2C2C;
 }
 
 header {
-  background: linear-gradient(90deg, #0b2e59, #2d6cdf);
-  color: white;
+  background: #2C2C2C;
+  color: #FAF7F2;
   padding: 1rem;
   text-align: center;
 }
@@ -17,8 +18,9 @@ header {
   padding: 8px;
   width: 80%;
   max-width: 400px;
-  border: none;
+  border: 1px solid #B68D40;
   border-radius: 6px;
+  background: #fff;
 }
 
 #categorias {
@@ -30,7 +32,7 @@ header {
   display: inline-block;
   margin: 5px;
   padding: 8px 16px;
-  background: #2d6cdf;
+  background: #B68D40;
   color: white;
   border-radius: 5px;
   cursor: pointer;
@@ -38,7 +40,7 @@ header {
 }
 
 .categoria:hover {
-  background: #1b4da0;
+  background: #96722F;
 }
 
 #productos {
@@ -54,17 +56,44 @@ header {
   padding: 1rem;
   text-align: center;
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  transition: transform 0.3s ease;
+}
+.card:hover {
+  transform: translateY(-5px);
 }
 
-.card img {
-  max-width: 100%;
-  border-radius: 5px;
-  height: 200px;
+.img-container {
+  position: relative;
+  width: 100%;
+  height: 220px;
+  overflow: hidden;
+  border-radius: 6px;
+}
+
+.img-container img {
+  width: 100%;
+  height: 100%;
   object-fit: cover;
+  transition: opacity 0.4s ease;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.img-container .img2 {
+  opacity: 0;
+}
+
+.img-container:hover .img1 {
+  opacity: 0;
+}
+
+.img-container:hover .img2 {
+  opacity: 1;
 }
 
 button {
-  background: #2d6cdf;
+  background: #B68D40;
   color: white;
   border: none;
   padding: 8px 10px;
@@ -75,13 +104,13 @@ button {
 }
 
 button:hover {
-  background: #1b4da0;
+  background: #96722F;
 }
 
 footer {
   text-align: center;
   padding: 1rem;
-  background: #0b2e59;
-  color: white;
+  background: #2C2C2C;
+  color: #FAF7F2;
   margin-top: 20px;
 }

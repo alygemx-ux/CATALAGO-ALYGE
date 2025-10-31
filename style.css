@@ -5,12 +5,12 @@ body {
   font-family: 'Poppins', Arial, sans-serif;
   margin: 0;
   padding: 0;
-  background: #FAF7F2;
-  color: #2C2C2C;
+  background: #FAF7F2; /* Fondo neutro */
+  color: #2C2C2C; /* Texto oscuro */
 }
 
 header {
-  background: #2C2C2C;
+  background: #2C2C2C; /* Contraste profesional */
   color: #FAF7F2;
   padding: 1rem;
   text-align: center;
@@ -24,7 +24,7 @@ header {
   padding: 8px;
   width: 80%;
   max-width: 400px;
-  border: 1px solid #B68D40;
+  border: 1px solid #D9C6B0; /* Beige principal */
   border-radius: 6px;
   background: #fff;
   outline: none;
@@ -32,8 +32,8 @@ header {
 }
 
 #buscador:focus {
-  border-color: #96722F;
-  box-shadow: 0 0 6px rgba(150, 114, 47, 0.5);
+  border-color: #BFA68A; /* Beige oscuro para foco */
+  box-shadow: 0 0 6px rgba(191, 166, 138, 0.5);
 }
 
 /* =======================
@@ -46,29 +46,3 @@ header {
 
 .categoria {
   display: inline-block;
-  margin: 5px;
-  padding: 8px 16px;
-  background: #B68D40;
-  color: white;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background 0.3s, transform 0.2s;
-}
-
-.categoria:hover {
-  background: #96722F;
-  transform: scale(1.05);
-}
-
-.categoria:active {
-  transform: scale(0.97);
-}
-
-/* =======================
-   PRODUCTOS
-======================= */
-#productos {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 15px;
-  padding: 1r
